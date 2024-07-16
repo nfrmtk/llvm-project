@@ -1233,11 +1233,16 @@ void TypePrinter::printTypeOfBefore(const TypeOfType *T, raw_ostream &OS) {
 void TypePrinter::printTypeOfAfter(const TypeOfType *T, raw_ostream &OS) {}
 
 void TypePrinter::printDecltypeBefore(const DecltypeType *T, raw_ostream &OS) {
+  if (const CXXFunctionalCastExpr* Underlying = dyn_cast<CXXFunctionalCastExpr>(T->getUnderlyingExpr())){
+      Underlying->getType().print(OS, Policy);
+      return;
+  }
   OS << "decltype(";
   if (T->getUnderlyingExpr())
-    T->getUnderlyingExpr()->printPretty(OS, nullptr, Policy);
+      T->getUnderlyingExpr()->printPretty(OS, nullptr, Policy);
   OS << ')';
   spaceBeforePlaceHolder(OS);
+
 }
 
 void TypePrinter::printPackIndexingBefore(const PackIndexingType *T,
